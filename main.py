@@ -66,8 +66,13 @@ def set_of_intervals():
     while True:
         period_end = input("Please set end date in format like 'YY/MM/DD HH:MM' or enter 'exit' to stop: ")
         if date_check(period_end) != -1:
-            period_end_log = date_check(period_end)
-            break
+            period_delta = datetime.datetime.strptime(period_end, '%y/%m/%d %H:%M') - datetime.datetime.strptime(period_start,
+                                                                                                           '%y/%m/%d %H:%M')
+            if str(period_delta)[0] == '-':
+                print("The End date is less then Start date. Please try again. \U0001F504")
+            else:
+                period_end_log = date_check(period_end)
+                break
 
     psdt = datetime.datetime.strftime(datetime.datetime.strptime(period_start, '%y/%m/%d %H:%M'),
                                       '%a  %b %d %H:%M:%S EEST %Y')
@@ -77,7 +82,6 @@ def set_of_intervals():
     print(period_end_log)
     print("*************************************************")
     print(f'We will start \nfrom {psdt} \nto   {pedt}')
-
 
 
 if __name__ == '__main__':
