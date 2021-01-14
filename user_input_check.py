@@ -3,6 +3,17 @@ This module is for checking of the input data.
 
 Used to get the answer either an user has input all necessary data in the correct
 form (data, path to the log file) or not.
+
+As example:
+- input date by user is:
+20/11/13 11:22 or 20/12/01 10:50
+
+- output date on user's screen is:
+Fri Nov 13 11:22:00 EET 2020 or Tue Dec 01 10:50:00 EET 2020
+
+- corrected output date used in log file is:
+Fri Nov 13 11:32:00 EET 2020 or Tue Dec  1 11:02:00 EET 2020
+!!! Shifted time and changed day number format !!!
 """
 
 import datetime
@@ -52,7 +63,7 @@ def date_check(period):
         return -1
 
 
-def log_file_check(input_date):
+def log_file_check(input_date, file_sr):
     """
     The function is for check the log file.
 
@@ -60,20 +71,18 @@ def log_file_check(input_date):
     - check that the log file is present in the working folder;
     - check if the input date is present in the log file;
     """
-    hc_file = 'stat.log'
-
     day = datetime.datetime.strftime(input_date, '%b %d')
     year = datetime.datetime.strftime(input_date, '%Y')
 
-    # The dates collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
+    # The date of days collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
     # We need to covert standard datetime format to the format presents in the log file.
     if day[4] == '0':
         day = day[0:4] + ' ' + day[5]
     try:
-        with open(hc_file, 'r', encoding='utf-8') as log_file:
+        with open(file_sr, 'r', encoding='utf-8') as log_file:
             for line in log_file:
                 if all([(day in line), (year in line)]):
-                    result = datetime.datetime.strftime(input_date, '%a %b %d %H:%M:%S EEST %Y')
+                    result = datetime.datetime.strftime(input_date, '%a %b %d %H:%M EET %Y')
                     return result
             print("This date isn't present in the log file.\U0001F504")
             return -1
@@ -82,7 +91,7 @@ def log_file_check(input_date):
         sys.exit()
 
 
-def set_of_intervals():
+def set_of_intervals(log_file_sr):
     """
     The function is for set dates interval.
 
@@ -91,12 +100,12 @@ def set_of_intervals():
     """
     while True:
         start = input("Please set START date YY/MM/DD HH:MM ('exit' to stop): ")
-        if date_check(start) != -1 and log_file_check(date_check(start)) != -1:
+        if date_check(start) != -1 and log_file_check(date_check(start), log_file_sr) != -1:
             # Is everything ok? Prepare separated outputs of the input START date:
             # for user and for us.
-            period_start_log = log_file_check(date_check(start))
+            period_start_log = log_file_check(date_check(start), log_file_sr)
             _ = datetime.datetime.strptime(start, '%y/%m/%d %H:%M')
-            instart = datetime.datetime.strftime(_, '%a %b %d %H:%M:%S EEST %Y')
+            instart = datetime.datetime.strftime(_, '%a %b %d %H:%M EET %Y')
             break
     while True:
         stop = input("Please set END date YY/MM/DD HH:MM ('exit' to stop): ")
@@ -109,12 +118,12 @@ def set_of_intervals():
             if str(period_delta)[0] == '-':
                 print("The END date is less then START date. Please try again. \U0001F504")
             else:
-                if (date_check(stop)) != -1 and log_file_check(date_check(stop)) != -1:
+                if (date_check(stop)) != -1 and log_file_check(date_check(stop), log_file_sr) != -1:
                     # Is everything ok? Prepare separated outputs of the input START date:
                     # for user and for us.
-                    period_stop_log = log_file_check(date_check(stop))
+                    period_stop_log = log_file_check(date_check(stop), log_file_sr)
                     _ = datetime.datetime.strptime(stop, '%y/%m/%d %H:%M')
-                    instop = datetime.datetime.strftime(_, '%a %b %d %H:%M:%S EEST %Y')
+                    instop = datetime.datetime.strftime(_, '%a %b %d %H:%M EET %Y')
                     break
     # The dates collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
     # We need to covert standard datetime format to the format presents in the log file.
@@ -132,6 +141,7 @@ def set_of_intervals():
 
 
 if __name__ == '__main__':
-    set_of_intervals()
+    LOG_FILE_SRC = 'stat.log'  # used for tests only.
+    set_of_intervals(LOG_FILE_SRC)
 
-__version__ = 01.21
+__version__ = '01.21'
