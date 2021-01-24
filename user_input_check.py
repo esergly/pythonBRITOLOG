@@ -16,8 +16,8 @@ Fri Nov 13 11:32:00 EET 2020 or Tue Dec  1 11:02:00 EET 2020
 !!! Shifted time and changed day number format !!!
 """
 
-import datetime
 import sys
+from datetime import datetime, timedelta
 
 
 def date_check(period):
@@ -30,19 +30,22 @@ def date_check(period):
     - want user to stop (word "exit" used as input data)?
     - if input date is in correct form it will changed to the nearest date which is
     present in the log file;
+
+    :param period: str
+    :return: datetime
     """
     if period == "exit":
         sys.exit()
     elif len(period) == 14:
         try:
-            valid_date = datetime.datetime.strptime(period, '%y/%m/%d %H:%M')
+            valid_date = datetime.strptime(period, '%y/%m/%d %H:%M')
         except ValueError:
             print("Input date isn't correct. Please try again. \U0001F504")
             return -1
         # In the log file we have values for each 15 min beginning from the second min of each hour.
         # The idea is to find the nearest biggest time value and use it in the parsing.
         # For example, the data for 10:15 will collect at 10:17, but for 10:18 will collect at 10:32
-        minute = datetime.datetime.strftime(valid_date, '%M')
+        minute = datetime.strftime(valid_date, '%M')
 
         if 2 <= int(minute) <= 16:
             correction = 17 - int(minute)
@@ -54,8 +57,8 @@ def date_check(period):
             correction = 62 - int(minute)
         else:
             correction = 2 - int(minute)
-        _ = datetime.datetime.strptime(period, '%y/%m/%d %H:%M')
-        period_correction = _ + datetime.timedelta(minutes=correction)
+        _ = datetime.strptime(period, '%y/%m/%d %H:%M')
+        period_correction = _ + timedelta(minutes=correction)
         # return corrected input by user date which can be use for the file log parsing.
         return period_correction
     else:
@@ -65,14 +68,18 @@ def date_check(period):
 
 def log_file_check(input_date, file_sr):
     """
-    The function is for check the log file.
+    This function uses to check the wanted dates in log file.
+    In case of this log file is present in the working folder.
 
     After getting the input date correction we use it for the log file checking:
     - check that the log file is present in the working folder;
     - check if the input date is present in the log file;
+    :param input_date: datetime
+    :param file_sr: str
+    :return: str
     """
-    day = datetime.datetime.strftime(input_date, '%b %d')
-    year = datetime.datetime.strftime(input_date, '%Y')
+    day = datetime.strftime(input_date, '%b %d')
+    year = datetime.strftime(input_date, '%Y')
 
     # The date of days collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
     # We need to covert standard datetime format to the format presents in the log file.
@@ -82,7 +89,7 @@ def log_file_check(input_date, file_sr):
         with open(file_sr, 'r', encoding='utf-8') as log_file:
             for line in log_file:
                 if all([(day in line), (year in line)]):
-                    result = datetime.datetime.strftime(input_date, '%a %b %d %H:%M EET %Y')
+                    result = datetime.strftime(input_date, '%a %b %d %H:%M EET %Y')
                     return result
             print("This date isn't present in the log file.\U0001F504")
             return -1
@@ -95,8 +102,11 @@ def set_of_intervals(log_file_sr):
     """
     The function is for set dates interval.
 
-    This function asks user to input START and STOP dates and times which will use
-    to create time's interval to get collected data.
+    This function asks user to input START and STOP dates (one by one) and times
+    which will use to create time's interval to get collected data.
+
+    :param log_file_sr: str
+    :return: str
     """
     while True:
         start = input("Please set START date YY/MM/DD HH:MM ('exit' to stop): ")
@@ -104,16 +114,16 @@ def set_of_intervals(log_file_sr):
             # Is everything ok? Prepare separated outputs of the input START date:
             # for user and for us.
             period_start_log = log_file_check(date_check(start), log_file_sr)
-            _ = datetime.datetime.strptime(start, '%y/%m/%d %H:%M')
-            instart = datetime.datetime.strftime(_, '%a %b %d %H:%M EET %Y')
+            _ = datetime.strptime(start, '%y/%m/%d %H:%M')
+            instart = datetime.strftime(_, '%a %b %d %H:%M EET %Y')
             break
     while True:
         stop = input("Please set END date YY/MM/DD HH:MM ('exit' to stop): ")
         if date_check(stop) != -1:
             # We check here can we collect data between input dates:
             # is STOP date is elder than START date?
-            date_stop = datetime.datetime.strptime(stop, '%y/%m/%d %H:%M')
-            date_start = datetime.datetime.strptime(start, '%y/%m/%d %H:%M')
+            date_stop = datetime.strptime(stop, '%y/%m/%d %H:%M')
+            date_start = datetime.strptime(start, '%y/%m/%d %H:%M')
             period_delta = date_stop - date_start
             if str(period_delta)[0] == '-':
                 print("The END date is less then START date. Please try again. \U0001F504")
@@ -122,8 +132,8 @@ def set_of_intervals(log_file_sr):
                     # Is everything ok? Prepare separated outputs of the input START date:
                     # for user and for us.
                     period_stop_log = log_file_check(date_check(stop), log_file_sr)
-                    _ = datetime.datetime.strptime(stop, '%y/%m/%d %H:%M')
-                    instop = datetime.datetime.strftime(_, '%a %b %d %H:%M EET %Y')
+                    _ = datetime.strptime(stop, '%y/%m/%d %H:%M')
+                    instop = datetime.strftime(_, '%a %b %d %H:%M EET %Y')
                     break
     # The dates collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
     # We need to covert standard datetime format to the format presents in the log file.
@@ -136,7 +146,7 @@ def set_of_intervals(log_file_sr):
 
     print("\n*******************************************")
     print(f'        The period has been chosen!         \n- From -> {instart} \n- To  ->  {instop}')
-    print("*******************************************")
+    print("*******************************************\n")
     return period_start_log, period_stop_log
 
 
