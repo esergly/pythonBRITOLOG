@@ -1,11 +1,4 @@
 def read_counters(result_file):
-    lookup_rest = {"29": 0, "30": 0, "31": 0, "32": 0}
-    lookup_soap = {"33": 0, "34": 0, "35": 0, "36": 0}
-    lookup_b_fifty = {"1": 0, "2": 0, "3": 0, "4": 0}
-    for line in result_file:
-        if (r'<r p="29">') in line:
-            lookup_rest["29"] = lookup_rest.get("29") + (int(line[26:-5]))
-    print(lookup_rest["29"])
     return
 
 
@@ -560,7 +553,3 @@ if __name__ == '__main__':
     read_counters(result)
 __version__ = '01.21'
 
-# request actual
-# request delta
-# success actual
-# success delta
