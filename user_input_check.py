@@ -133,7 +133,12 @@ def set_of_intervals(log_file_sr):
                     # for user and for us.
                     period_stop_log = log_file_check(date_check(stop), log_file_sr)
                     _ = datetime.strptime(stop, '%y/%m/%d %H:%M')
+                    # Add more 15 minutes to get the data included into the
+                    # log file for the STOP date. This is for us only!
+                    _t = datetime.strptime(period_stop_log, '%a %b %d %H:%M EET %Y')
+                    _t += timedelta(minutes=15)
                     instop = datetime.strftime(_, '%a %b %d %H:%M EET %Y')
+                    period_stop_log = datetime.strftime(_t, '%a %b %d %H:%M EET %Y')
                     break
     # The dates collected in the log files have format 1, 2, 3... 11, 12 e.t.c.
     # We need to covert standard datetime format to the format presents in the log file.
@@ -145,7 +150,7 @@ def set_of_intervals(log_file_sr):
         period_stop_log = period_stop_log[:8] + ' ' + period_stop_log[9:]
 
     print("\n*******************************************")
-    print(f'        The period has been chosen!         \n- From -> {instart} \n- To  ->  {instop}')
+    print(f'        The period has been chosen!         \n- From -> {instart} \n- To   -> {instop}')
     print("*******************************************\n")
     return period_start_log, period_stop_log
 
