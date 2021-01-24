@@ -1,3 +1,8 @@
+# notes
+#    print(set_of_intervals.__doc__)
+# period_end_log = datetime.datetime.strftime(datetime.datetime.strptime(period_start, '%y/%m/%d %H:%M') + datetime.timedelta(minutes=30), '%a %b %d %H:%M:%S EEST %Y')
+# Tue Oct 13 23:32:02 EEST 2020
+
 import datetime
 
 textime = "Tue Oct 13 23:47:01 EEST 2020"
