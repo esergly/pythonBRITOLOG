@@ -37,7 +37,7 @@ def read_the_interval(interval, hc_file):
                         break
             return tuple(result_file)
     except IOError:
-        print("The source file can't been reading")
+        print("The source file can't been reading.")
         sys.exit()
 
 
@@ -53,7 +53,7 @@ def choose_task(time_interval, file):
                   "1 for counters data \n"
                   "2 for alarms data \n"
                   "3 for services data \n"
-                  "0 for exit: ")
+                  "0 for exit: \n")
         if _ == "1":
             read_counters.read_counters(read_the_interval(time_interval, file))
         elif _ == "2":

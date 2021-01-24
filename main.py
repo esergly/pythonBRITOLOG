@@ -10,6 +10,5 @@ if __name__ == '__main__':
     health_check_log = 'stat.log'
     c = user_input_check.set_of_intervals(health_check_log)
 # приходит после проверки даты ('Thu Dec 31 23:47 EET 2020', 'Fri Jan  1 00:17 EET 2021')
-    d = cut_the_data.choose_task(c,health_check_log)
-    print(d)
+    cut_the_data.choose_task(c,health_check_log)
 __version__ = '01.21'
